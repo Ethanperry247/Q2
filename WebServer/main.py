@@ -24,35 +24,42 @@ p.start(2.5) # Initialization
 p2 = GPIO.PWM(servoPinTwo, 50) # GPIO 7 for PWM with 50Hz
 p2.start(2.5) # Initialization
 
-cupsPerBox = 40
-restTime = 0.25 # Seconds of rest.
+cupsPerBox = 10
+restTime = 1.5 # Seconds of rest for the servos.
 restJawAngle = 6
 engagedJawAngle = 1
 
+stopThread = False
 
 def servo():
     try:
         while True:
+            global stopThread
+            if (stopThread):
+                break
             p.ChangeDutyCycle(engagedJawAngle)
             p2.ChangeDutyCycle(restJawAngle)
-            time.sleep(1.5)
+            time.sleep(restTime)
+            if (stopThread):
+                break
             p.ChangeDutyCycle(restJawAngle)
             p2.ChangeDutyCycle(engagedJawAngle)
-            time.sleep(1.5)
+            time.sleep(restTime)
     except KeyboardInterrupt:
-        p.stop()
-        p2.stop()
-        GPIO.cleanup()
+        pass
+        # p.stop()
+        # p2.stop()
+        # GPIO.cleanup()
 
 def photoresistor():
     counter = 0
     check = False
-    wait = 0.05
+    wait = 0.075
     while True:
         if (GPIO.input(photoresistorPin) == GPIO.LOW):
             check = True
             time.sleep(wait)
-        if ((GPIO.input(photoresistorPin) == GPIO.HIGH)):
+        if ((GPIO.input(photoresistorPin) == GPIO.HIGH) and check == True):
             counter += 1
             print(f'Cup Number #{counter} Detected.')
             check = False
@@ -61,13 +68,24 @@ def photoresistor():
             counter = 0
             incrementBox()
 
+
+servoThread = threading.Thread(target=servo, args=())
+photoresistorThread = threading.Thread(target=photoresistor, args=())
+
 def incrementBox():
-    pass
+    print("Stopping Servos...")
+    global stopThread
+    stopThread = True # Flag to stop the servos.
+    print("Servos stopped. Incrementing Conveyor...")
+    time.sleep(2)
+    print("Starting up servos...")    
+    stopThread = False # Allow thge servos to continue running.
+    servoThread = threading.Thread(target=servo, args=())
+    servoThread.start()
+    print ("Servos back online!")
+p
 
 def main():
-    servoThread = threading.Thread(target=servo, args=())
-    photoresistorThread = threading.Thread(target=photoresistor, args=())
-
     servoThread.start()
     photoresistorThread.start()
 
