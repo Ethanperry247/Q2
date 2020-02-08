@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+   <head>
+        <title>{{ title }}</title>
+
+        <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+
+        <style>
+            
+        body {
+            margin: 0;
+            margin-top: 0;
+            color: black;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 0;
+        }
+
+        .flex {
+            display: flex;
+            flex-wrap: wrap;
+            flex-direction: row;
+            height: auto;
+            align-items: center;
+            justify-content: center;
+            margin-top: 0;
+            margin-left: 5%;
+            margin-right: 5%;
+            position: relative;
+        }
+
+        .box {
+            background-color: skyblue;
+            text-align: center;
+            margin: 5px;
+            line-height: 50px;
+            width: calc(25% - 10px);
+            text-decoration: none;
+            color: black;
+            border-radius: 5px;
+        }
+
+        </style>
+   </head>
+   <body>
+        <h1>Alpine Coffee K-Cup Counter Interface</h1>
+        <!-- <h2>The date and time on the server is: {{ time }}</h2> -->
+        <h2>Machine Status</h2>
+        <h3 class="flex">
+            <div class="box">IDLE</div>
+        </h3>
+
+        <h2>Manual Control</h2>
+        <h3 class="flex">
+            <a href="/ON" class="button box">RELEASE CUPS</a>
+            <a href="/OFF"class="button box">CLOSE GATE</a>
+            <a href="/OFF"class="button box">EMERGENCY SHUTOFF</a>
+        </h3>
+
+        <h2>Alter Box Count</h2>
+        <h3 class="flex">
+            <a href="/ON" class="button box">24 COUNT</a>
+            <a href="/OFF"class="button box">40 COUNT</a>
+            <a href="/OFF"class="button box">96 COUNT</a>
+        </h3>
+   </body>
+</html>
