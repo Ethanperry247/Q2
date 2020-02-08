@@ -24,21 +24,16 @@ GPIO.setup(servoPinTwo, GPIO.OUT)
 GPIO.setup(photoresistorPin, GPIO.IN)
 # GPIO.setup(conveyorPhotoresistorPin, GPIO.IN)
 # GPIO.setup(converyorPin, GPIO.OUT)
-
-p = GPIO.PWM(servoPin, 50) # GPIO 11 for PWM with 50Hz
-p.start(2.5) # Initialization
-
-p2 = GPIO.PWM(servoPinTwo, 50) # GPIO 7 for PWM with 50Hz
-p2.start(2.5) # Initialization
+print ("I'm running")
 
 cupsPerBox = 10
 restTime = 1.5 # Seconds of rest for the servos.
 restJawAngle = 6
 engagedJawAngle = 1
 
+# Global Variables.
 stopThread = False
-
-
+counter = 0
 
 app = Flask(__name__)
 
@@ -46,9 +41,11 @@ app = Flask(__name__)
 def index():
     now = datetime.datetime.now()
     timeString = now.strftime("%Y-%m-%d %H:%M")
+    global counter
     templateData = {
       'title' : 'HELLO!',
-      'time': timeString
+      'time': timeString,
+      'cups': counter
       }
     return render_template('index.html', **templateData)
 
@@ -66,7 +63,13 @@ def action(action):
     }
     return render_template('index.html', **templateData)
 
-def servo(self):
+def servo():
+    p = GPIO.PWM(servoPin, 50) # GPIO 11 for PWM with 50Hz
+    p.start(2.5) # Initialization
+
+    p2 = GPIO.PWM(servoPinTwo, 50) # GPIO 7 for PWM with 50Hz
+    p2.start(2.5) # Initialization
+
     try:
         while True:
             global stopThread
@@ -81,13 +84,11 @@ def servo(self):
             p2.ChangeDutyCycle(engagedJawAngle)
             time.sleep(restTime)
     except KeyboardInterrupt:
-        pass
-        # p.stop()
-        # p2.stop()
-        # GPIO.cleanup()
+        p.stop()
+        p2.stop()
 
-def photoresistor(self):
-    counter = 0
+def photoresistor():
+    global counter
     check = False
     wait = 0.075
     while True:
@@ -104,10 +105,7 @@ def photoresistor(self):
             incrementBox()
 
 
-servoThread = threading.Thread(target=servo, args=())
-photoresistorThread = threading.Thread(target=photoresistor, args=())
-
-def incrementBox(self):
+def incrementBox():
     print("Stopping Servos...")
     global stopThread
     stopThread = True # Flag to stop the servos.
@@ -119,8 +117,10 @@ def incrementBox(self):
     servoThread.start()
     print ("Servos back online!")
 
-def main(self):
-    servoThread.start()
+def main():
+    servoThread = threading.Thread(target=servo, args=())
+    photoresistorThread = threading.Thread(target=photoresistor, args=())
+    # servoThread.start()
     photoresistorThread.start()
 
 main()
