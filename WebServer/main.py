@@ -83,7 +83,6 @@ def incrementBox():
     servoThread = threading.Thread(target=servo, args=())
     servoThread.start()
     print ("Servos back online!")
-p
 
 def main():
     servoThread.start()

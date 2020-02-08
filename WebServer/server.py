@@ -1,7 +1,9 @@
 from flask import Flask, render_template
 import datetime
 import logging
+from mainClass import *
 
+mechanism = Mechanism()
 
 app = Flask(__name__)
 
