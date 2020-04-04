@@ -26,17 +26,20 @@ GPIO.setup(photoresistorPin, GPIO.IN)
 # GPIO.setup(converyorPin, GPIO.OUT)
 print ("I'm running")
 
-cupsPerBox = 10
+cupsPerBox = 10 # Cups to be loaded in each box before incrementing the conveyor.
 restTime = 1.5 # Seconds of rest for the servos.
-restJawAngle = 6
+restJawAngle = 6 # Jaw angles. Keep the rest jaw to 6 and engaged jaw to 1 for best performance.
 engagedJawAngle = 1
 
 # Global Variables.
-stopThread = False
-counter = 0
+stopThread = False # Stops the servo thread.
+counter = 0 # Global counter for the number of cups in the current box.
+serverOnline = False # Designed to run the main method once.
 
 app = Flask(__name__)
 
+# Web page loading.
+###############################################################
 @app.route("/")
 def index():
     now = datetime.datetime.now()
@@ -62,7 +65,10 @@ def action(action):
         'time': timeString
     }
     return render_template('index.html', **templateData)
+###############################################################
 
+# Hardware sided code.
+###############################################################
 def servo():
     p = GPIO.PWM(servoPin, 50) # GPIO 11 for PWM with 50Hz
     p.start(2.5) # Initialization
@@ -72,55 +78,66 @@ def servo():
 
     try:
         while True:
-            global stopThread
+            global stopThread # If a global thread stop is detected, shut down.
             if (stopThread):
                 break
             p.ChangeDutyCycle(engagedJawAngle)
             p2.ChangeDutyCycle(restJawAngle)
-            time.sleep(restTime)
+            time.sleep(restTime) # Rest between the next cup release.
             if (stopThread):
                 break
             p.ChangeDutyCycle(restJawAngle)
             p2.ChangeDutyCycle(engagedJawAngle)
-            time.sleep(restTime)
+            time.sleep(restTime) # Rest between the next cup release.
     except KeyboardInterrupt:
-        p.stop()
+        p.stop() # Clean up.
         p2.stop()
 
 def photoresistor():
-    global counter
+    global counter # Global counter updated in this method.
     check = False
-    wait = 0.075
+    wait = 0.075 # Wait this much time for the cup to fall.
+    # Loop this block to detect falling cups.
     while True:
         if (GPIO.input(photoresistorPin) == GPIO.LOW):
             check = True
             time.sleep(wait)
         if ((GPIO.input(photoresistorPin) == GPIO.HIGH) and check == True):
             counter += 1
-            print(f'Cup Number #{counter} Detected.')
+            print(f'Cup Number #{counter} Detected.') # For debugging purposes, print # of cups.
             check = False
             time.sleep(wait)
         if (counter >= cupsPerBox):
             counter = 0
             incrementBox()
 
-
+# If a box has reached its max number of cups, increment the conveyor. 
 def incrementBox():
     print("Stopping Servos...")
     global stopThread
     stopThread = True # Flag to stop the servos.
     print("Servos stopped. Incrementing Conveyor...")
-    time.sleep(2)
+    time.sleep(2) # Wait for the conveyor to increment.
     print("Starting up servos...")    
     stopThread = False # Allow thge servos to continue running.
-    servoThread = threading.Thread(target=servo, args=())
+    servoThread = threading.Thread(target=servo, args=()) # Start a new thred to get the servos running.
     servoThread.start()
     print ("Servos back online!")
+
+def signalConveyor():
+    newBoxFlag = False
+    while (not newBoxFlag):
+        pass
+    pass
 
 def main():
     servoThread = threading.Thread(target=servo, args=())
     photoresistorThread = threading.Thread(target=photoresistor, args=())
-    # servoThread.start()
+    servoThread.start()
     photoresistorThread.start()
 
-main()
+# At the start of the server, run the main method once.
+if (not serverOnline):
+    main()
+    serverOnline = True
+###############################################################
