@@ -60,6 +60,10 @@ def action(action):
         print("Clicked on!")
     if (action == 'OFF'):
         print("Clicked Off!")
+    if (action == 'PAUSE'):
+        pause()
+    if (action == 'RESUME'):
+        resume()
     templateData = {
         'title' : 'HELLO!',
         'time': timeString
@@ -123,6 +127,18 @@ def incrementBox():
     time.sleep(2) # Wait for the conveyor to increment.
     print("Starting up servos...")    
     stopThread = False # Allow thge servos to continue running.
+    servoThread = threading.Thread(target=servo, args=()) # Start a new thred to get the servos running.
+    servoThread.start()
+    print ("Servos back online!")
+
+def pause():
+    global stopThread
+    stopThread = True # Flag to stop the servos.
+    print("Servos stopped.")
+
+def resume():
+    global stopThread
+    stopThread = False # Flag to start the servos.
     servoThread = threading.Thread(target=servo, args=()) # Start a new thred to get the servos running.
     servoThread.start()
     print ("Servos back online!")
