@@ -2,7 +2,7 @@
 from flask import Flask, render_template
 import datetime
 import logging
-from mainClass import *
+# from mainClass import *
 
 # Hardware sided imports.
 import RPi.GPIO as GPIO
@@ -69,12 +69,15 @@ def action(action):
 
 # Hardware sided code.
 ###############################################################
-def servo():
+if (not serverOnline):
     p = GPIO.PWM(servoPin, 50) # GPIO 11 for PWM with 50Hz
     p.start(2.5) # Initialization
 
     p2 = GPIO.PWM(servoPinTwo, 50) # GPIO 7 for PWM with 50Hz
     p2.start(2.5) # Initialization
+
+def servo():
+    print("Beginning servos...")    
 
     try:
         while True:
