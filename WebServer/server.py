@@ -126,9 +126,11 @@ def incrementBox():
 
 def signalConveyor():
     newBoxFlag = False
+    noBox = False
     while (not newBoxFlag):
-        pass
-    pass
+        GPIO.output(conveyorPin, GPIO.HIGH)
+        if (GPIO.input()):
+            pass
 
 def main():
     servoThread = threading.Thread(target=servo, args=())
