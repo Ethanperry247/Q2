@@ -16,15 +16,17 @@ servoPinTwo = 7
 # Photoresistors use 3.3 volts.
 photoresistorPin = 13
 conveyorPhotoresistorPin = 15
+
+# Conveyor pin is a 3.3 volt logical output.
 conveyorPin = 12
 
 GPIO.setmode(GPIO.BOARD)
 GPIO.setup(servoPin, GPIO.OUT)
 GPIO.setup(servoPinTwo, GPIO.OUT)
-GPIO.setup(photoresistorPin, GPIO.IN)
+# GPIO.setup(photoresistorPin, GPIO.IN)
 # GPIO.setup(conveyorPhotoresistorPin, GPIO.IN)
-# GPIO.setup(converyorPin, GPIO.OUT)
-print ("I'm running")
+GPIO.setup(conveyorPin, GPIO.OUT)
+print ("Hardware Online.")
 
 cupsPerBox = 10 # Cups to be loaded in each box before incrementing the conveyor.
 restTime = 1.5 # Seconds of rest for the servos.
@@ -143,17 +145,33 @@ def resume():
     servoThread.start()
     print ("Servos back online!")
 
+# Called with the assumption that a filled box is in place.
 def signalConveyor():
-    newBoxFlag = False
-    noBox = False
+    newBoxFlag = False # True if a new box is in place.
+    noBox = False # True if no box is in place.
+    GPIO.output(conveyorPin, GPIO.HIGH) # Set the output voltage to 3.3 volts on the conveyor pin.
     while (not newBoxFlag):
-        GPIO.output(conveyorPin, GPIO.HIGH)
-        if (GPIO.input()):
-            pass
+        if (GPIO.input(conveyorPhotoresistorPin) == GPIO.HIGH and noBox):
+            GPIO.output(conveyorPin, GPIO.LOW) # Set the output voltage to 0 volts on the conveyor pin.
+            newBoxFlag = True
+        if (GPIO.input(conveyorPhotoresistorPin) == GPIO.LOW):
+            noBox = True
+
+# If a box is in place, then ignore. Otherwise, increment the conveyor until a new box is in place.
+def initialize():
+    newBoxFlag = False # True if a new box is in place.
+    if (GPIO.input(conveyorPhotoresistorPin) == GPIO.LOW):
+        GPIO.output(conveyorPin, GPIO.HIGH) # Set the output voltage to 3.3 volts on the conveyor pin.
+        while (not newBoxFlag):
+            if (GPIO.input(conveyorPhotoresistorPin) == GPIO.HIGH):
+                GPIO.output(conveyorPin, GPIO.LOW) # Set the output voltage to 0 volts on the conveyor pin.
+                newBoxFlag = True
+            
 
 def main():
     servoThread = threading.Thread(target=servo, args=())
     photoresistorThread = threading.Thread(target=photoresistor, args=())
+    initialize()
     servoThread.start()
     photoresistorThread.start()
 
