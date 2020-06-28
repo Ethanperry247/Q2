@@ -1,0 +1,141 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
+
+:root {
+    --color-primary: black;
+    --color-secondary: rgb(104, 182, 255);
+}
+
+.title:before {
+    content: "Alpine Coffee KCup Interface";
+}
+
+* {
+    font-family: 'Roboto', sans-serif;
+    text-align: center;
+}
+
+h1, h2 {
+    color: var(--color-primary);
+}
+
+h3, h4 {
+    color: var(--color-secondary);
+}
+
+input[type=text], input[type=password], select {
+    width: 25%;
+    min-width: 200px;
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    border: 2px solid var(--color-primary);
+    background-color: whitesmoke;
+    border-radius: 5px;
+}
+
+input[type=submit], button {
+    background-color: var(--color-secondary);
+    color: white;
+    min-width: 50px;
+    padding: 10px, 20px, 10px, 20px;
+    border: none;
+    border-radius: 5px;
+}
+
+input[type=submit]:hover, button:hover {
+    transition: 0.3s;
+    background-color: var(--color-primary);
+    color: white;
+    cursor: pointer;
+}
+
+p {
+    width: 30%;
+    min-width: 200px;
+    text-align: justify;
+}
+
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: var(--color-secondary);
+    border-radius: 5px;
+}
+  
+li {
+    float: left;
+}
+  
+li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+  
+  /* Change the link color to #111 (black) on hover */
+li a:hover { 
+    transition: 0.3s;
+    background-color: var(--color-primary);
+    color: white;
+}
+
+strong {
+    color: var(--color-secondary);
+    font-weight: 100;
+}
+
+.right {
+    float: right;
+}
+
+.circle {
+    list-style: circle;
+}
+
+.flex {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    height: auto;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0;
+    margin-left: 5%;
+    margin-right: 5%;
+    position: relative;
+}
+
+.light-box {
+    border-color: black;
+    border: solid;
+    border-radius: 5px;
+    text-align: center;
+    margin: 5px;
+    line-height: 50px;
+    width: calc(25% - 10px);
+    min-width: 250px;
+    color: black;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.box {
+    background-color: var(--color-secondary);
+    text-align: center;
+    margin: 5px;
+    line-height: 50px;
+    width: calc(25% - 10px);
+    min-width: 250px;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.box:hover {
+    background-color: var(--color-primary);
+    color: white;
+}

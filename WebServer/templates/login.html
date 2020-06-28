@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+   <head>
+        <title>Choose a Type</title>
+
+        <link rel="stylesheet" type="text/css" href= "{{ url_for('static',filename='styles/global.css') }}">
+   </head>
+   <body>
+        <ul>
+            <!-- Left to Right Nav -->
+            <li><a href="{{ url_for('main') }}">Dashboard</a></li>
+
+            <!-- Right to Left Nav -->
+            <li class="right"><a href="{{ url_for('logout') }}">Log Out</a></li>
+            <li class="right"><a>Welcome User: {{ user }}</a></li>
+        </ul>
+        <h1>Alpine Coffee K-Cup Counter Interface</h1>
+        <div style="margin: auto">
+            <h4>Welcome to the K-Cup Interface.</h4>
+            <form name="type" method="POST" action="{{ url_for('create_order') }}">
+                <label>Please enter the kcup type being made.</label><br>
+                <select name="type" id="type">
+                    {% for item in types %}
+                    <option value="{{item}}">{{item}}</option>
+                    {% endfor %}
+                </select><br>
+                <button type="submit">Continue to Dashboard.</button>
+            </form>
+        </div>
+   </body>
+</html>

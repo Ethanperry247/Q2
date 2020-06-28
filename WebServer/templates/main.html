@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+
+<head>
+    <title>KCup Interface Dashboard</title>
+
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/global.css') }}">
+</head>
+
+<body>
+    <ul>
+        <!-- Left to Right Nav -->
+        <li><a href="{{ url_for('main') }}">Dashboard</a></li>
+        <li><a href="{{ url_for('login') }}">Change Order</a></li>
+
+        <!-- Right to Left Nav -->
+        <li class="right"><a href="{{ url_for('send_report') }}">Send Daily Progress Report</a></li>
+        <li class="right"><a href="{{ url_for('logout') }}">Log Out</a></li>
+        <li class="right"><a>Welcome User: {{ user }}</a></li>
+    </ul>
+    <h1>Alpine Coffee K-Cup Counter Interface</h1>
+
+    <br>
+    <hr>
+    <br>
+
+    <h2>Manual Control</h2>
+    <h3 class="flex">
+        <a href="/main/OPEN" class="box">RELEASE CUPS</a>
+        <a href="/main/CLOSE" class="box">CLOSE GATE</a>
+        <a href="/main/OPEN" class="box">EMERGENCY SHUTOFF</a>
+        <a href="/main/STARTCONVEYOR" class="box">RUN CONVEYOR</a>
+        <a href="/main/STOPCONVEYOR" class="box">STOP CONVEYOR</a>
+        <!-- <a href="/main/ADD" class="box">MANUALLY ADD CUP</a> -->
+        <a href="" onclick="getNewStatistics()" class="box">REFRESH STATISTICS</a>
+    </h3>
+
+    <br>
+    <hr>
+    <br>
+
+    <h2>Alter Box Count</h2>
+    <h3 class="flex">
+        <a href="/change_box_count/24" class="box">24 COUNT</a>
+        <a href="/change_box_count/40" class="box">40 COUNT</a>
+        <a href="/change_box_count/96" class="box">96 COUNT</a>
+    </h3>
+
+    <br>
+    <hr>
+    <br>
+
+    <h2>Manually Enter a Box Count</h2>
+    <h3 class="flex"></h3>
+    <form action="{{ url_for('change_box_count') }}" method="post">
+        <label>Enter Box Count Below: </label><br>
+        <input type="text" name="count"><br>
+        <input type="submit" value="Submit">
+    </form>
+
+    <br>
+    <hr>
+    <br>
+
+    <h2>Statistics</h2>
+    <div class="flex">
+        <div class="light-box">
+            <h2>Current Cup Type</h2>
+            <h3 id="currentType">{{ current_type }}</h3>
+        </div>
+        <div class="light-box">
+            <h2>Cups in Current Box</h2>
+            <h3 id="currentBox">{{ current_box }}</h3>
+        </div>
+        <div class="light-box">
+            <h2>Current Box Count</h2>
+            <h3 id="currentBoxCount">{{ current_box_count }}</h3>
+        </div>
+        <div class="light-box">
+            <h2>Total Current Type Produced</h2>
+            <h3 id="currentTypeTotal">{{ current }}</h3>
+        </div>
+        <div class="light-box">
+            <h2>Total Cups Produced</h2>
+            <h3 id="totalCups">{{ total }}</h3>
+        </div>
+        <div class="light-box">
+            <h2>Total Boxes Produced</h2>
+            <h3 id=totalBoxes>{{ total_boxes }}</h3>
+        </div>
+    </div>
+
+    <script>
+        const fireInterval = 5000;
+        setInterval(() => {
+            getNewStatistics();
+        }, fireInterval);
+
+        function getNewStatistics() {
+            const Http = new XMLHttpRequest();
+            const url = `${document.location.origin}/AJAX`
+            Http.open("GET", url);
+            Http.send();
+            Http.responseType = 'text';
+            Http.onreadystatechange = (e) => {
+                const responseObject = JSON.parse(Http.responseText);
+                console.log(responseObject);
+                updateStatistics(responseObject);
+            }
+        }
+
+        function updateStatistics(response) {
+            document.getElementById('currentBox').innerHTML = (response.currentBox);
+            document.getElementById('currentBoxCount').innerHTML = (response.currentBoxCount);
+            document.getElementById('currentTypeTotal').innerHTML = (response.currentTypeTotal);
+            document.getElementById('totalCups').innerHTML = (response.totalCups);
+            document.getElementById('totalBoxes').innerHTML = (response.totalBoxes);
+        }
+    </script>
+
+</body>
+
+</html>

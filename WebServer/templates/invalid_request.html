@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+   <head>
+        <title>{{ title }}</title>
+
+        <link rel="stylesheet" type="text/css" href= "{{ url_for('static',filename='styles/global.css') }}">
+   </head>
+   <body>
+          <h1>Alpine Coffee K-Cup Counter Interface</h1>
+          <h4>Invalid request. Please return to the login page.</h4>
+          <a href="{{ url_for('index') }}">Login Page</a>
+   </body>
+</html>
